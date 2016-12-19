@@ -13,7 +13,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
                               verbose=FALSE,delta.file=100,id.extract=FALSE,
                               id.extract.function=function(d){return(d)},
                               file.start=-9,image.hdu=1,seed.user=101,
-                              noise.add=FALSE,noise.boost=NULL,subset=NULL)
+                              noise.add=FALSE,noise.boost=NULL)
 {
   nfile = length(filename.input)
 
@@ -30,7 +30,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
     axmax = axmin = angle = rep(-9,nfile)
     sn    = rep(-9,nfile)
     size  = rep(-9,nfile)
-    noise = sigma.hat.old = sigma.hat.new = rep(-9,nfile)
+    sigma.hat.old = sigma.hat.new = rep(-9,nfile)
     id    = 1:nfile
     iilo  = 1
     if ( file.start > 1 ) iilo = file.start  # for debugging
@@ -45,10 +45,6 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
   for ( ii in iilo:nfile ) {
 
     if ( iilo > nfile ) break;
-
-    if ( is.null(subset) == FALSE ) {
-      if ( subset[ii] == 0 ) next;
-    }
 
     result = tryCatch(
       {
@@ -172,7 +168,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
     if ( ii%%increm.save == 0 ) {
       save(ii,scale.smooth,scale.pix,scale.psf,eta,thrlev,id,filename.input,
            M_level,M,M_level_o,M_o,M_level_p,M_p,I,D,axmax,axmin,angle,sn,size,
-           Gini,M20,C,A,noise,sigma.hat.old,sigma.hat.new,subset,
+           Gini,M20,C,A,sigma.hat.old,sigma.hat.new,
            file=filename.increm)
     }
     if ( verbose == TRUE ) {
@@ -182,7 +178,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
 
   save(ii,scale.smooth,scale.pix,scale.psf,eta,thrlev,id,filename.input,
        M_level,M,M_level_o,M_o,M_level_p,M_p,I,D,axmax,axmin,angle,sn,size,
-       Gini,M20,C,A,noise,sigma.hat.old,sigma.hat.new,subset,
+       Gini,M20,C,A,sigma.hat.old,sigma.hat.new,
        file=filename.output)
 
   return(list(finish=TRUE,file.number=ii))
