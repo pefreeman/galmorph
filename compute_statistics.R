@@ -12,7 +12,8 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
                               filename.increm="compute_statistics_increm.Rdata",
                               verbose=FALSE,delta.file=100,id.extract=FALSE,
                               id.extract.function=function(d){return(d)},
-                              file.start=-9,image.hdu=1)
+                              file.start=-9,image.hdu=1
+                              trim=FALSE,trim.amount=0)
 {
   nfile = length(filename.input)
 
@@ -52,24 +53,16 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
         x = readFITS(filename.input[ii],hdu=image.hdu)
         img = x$imDat
         rm(x)
+        if ( trim == TRUE ) {
+          dim.img = dim(img)
+          img = img[(trim.amount+1):(dim.img[1]-trim.amount),
+                    (trim.amount+1):(dim.img[2]-trim.amount)]
+        }
 
         # Check for zeroes in the postage stamp image, indicating
         # possible edge-of-field issues.
         w = which(img==0,arr.ind=TRUE)
         if ( length(w[,1])/length(img) > 0.05 ) next;  # ad hoc
-
-        # Add noise to the image
-        if ( noise.add == TRUE ) {
-          out = segmap(img,eta=eta,thrlev=thrlev)
-          smap = out$c
-          smap.all = out$allc
-          if ( is.null(smap.all) == T ) next;
-          w = which(smap.all==0,arr.ind=T)
-          sigma.hat.old[ii] = sd(img[w])
-          sigma.boost = sqrt(noise.boost^2-1)*sigma.hat.old[ii]
-          img = img + rnorm(length(img),mean=0,sd=sigma.boost)
-          sigma.hat.new[ii] = sd(img[w])
-        }
 
         # Smooth the image if necessary to match PSFs
         if ( scale.psf > 0 ) img = conv_image(img,scale.psf)
@@ -164,8 +157,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
     if ( ii%%increm.save == 0 ) {
       save(ii,scale.smooth,scale.pix,scale.psf,eta,thrlev,id,filename.input,
            M_level,M,M_level_o,M_o,M_level_p,M_p,I,D,axmax,axmin,angle,sn,size,
-           Gini,M20,C,A,sigma.hat.old,sigma.hat.new,
-           file=filename.increm)
+           Gini,M20,C,A,file=filename.increm)
     }
     if ( verbose == TRUE ) {
       if ( ii%%delta.file == 0 ) cat("Completed ",ii," of ",nfile,"...\n")
@@ -174,8 +166,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
 
   save(ii,scale.smooth,scale.pix,scale.psf,eta,thrlev,id,filename.input,
        M_level,M,M_level_o,M_o,M_level_p,M_p,I,D,axmax,axmin,angle,sn,size,
-       Gini,M20,C,A,sigma.hat.old,sigma.hat.new,
-       file=filename.output)
+       Gini,M20,C,A,file=filename.output)
 
   return(list(finish=TRUE,file.number=ii))
 }
