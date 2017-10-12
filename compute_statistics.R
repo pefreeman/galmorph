@@ -12,8 +12,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
                               filename.increm="compute_statistics_increm.Rdata",
                               verbose=FALSE,delta.file=100,id.extract=FALSE,
                               id.extract.function=function(d){return(d)},
-                              file.start=-9,image.hdu=1,seed.user=101,
-                              noise.add=FALSE,noise.boost=NULL)
+                              file.start=-9,image.hdu=1)
 {
   nfile = length(filename.input)
 
@@ -30,7 +29,6 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
     axmax = axmin = angle = rep(-9,nfile)
     sn    = rep(-9,nfile)
     size  = rep(-9,nfile)
-    sigma.hat.old = sigma.hat.new = rep(-9,nfile)
     id    = 1:nfile
     iilo  = 1
     if ( file.start > 1 ) iilo = file.start  # for debugging
@@ -39,8 +37,6 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
     nfile = length(M)
     iilo  = ii+1
   }
-
-  set.seed(seed.user)
 
   for ( ii in iilo:nfile ) {
 
