@@ -12,7 +12,7 @@ compute_statistics = function(filename.input=c(),load=FALSE,increm.save=200,
                               filename.increm="compute_statistics_increm.Rdata",
                               verbose=FALSE,delta.file=100,id.extract=FALSE,
                               id.extract.function=function(d){return(d)},
-                              file.start=-9,image.hdu=1
+                              file.start=-9,image.hdu=1,
                               trim=FALSE,trim.amount=0)
 {
   nfile = length(filename.input)
