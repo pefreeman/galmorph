@@ -1,1 +1,1 @@
-R linguist-detectable=false
+R/*.R linguist-detectable=false
