@@ -16,7 +16,6 @@ import compute_MID as mid
 import compute_GM20 as gm20
 import compute_CA as ca
 import compute_genCA as gca
-import sys
 
 try:
     import progressbar as pb
